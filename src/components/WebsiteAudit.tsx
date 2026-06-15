@@ -23,7 +23,105 @@ export default function WebsiteAudit({ selectedClient, onRunAudit, onNavigate }:
   const handleCaptureScreenshot = async () => {
     if (!reportRef.current) return;
     setIsCapturing(true);
+    
+    // Store original styles and reference list to restore after
+    let originalStyles: { element: HTMLStyleElement | HTMLLinkElement, text?: string, disabled: boolean }[] = [];
+    let patchedStyleElements: HTMLStyleElement[] = [];
+
     try {
+      // Create safe RGB/RGBA representations for oklch and oklab colors to protect html2canvas from crashing
+      const cleanOklch = (text: string) => {
+        return text.replace(/oklch\(([^)]+)\)/g, (match, values) => {
+          const parts = values.split(/[\s,/]+/).filter(Boolean);
+          if (parts.length >= 3) {
+            const l = parseFloat(parts[0]);
+            const c = parseFloat(parts[1]);
+            const h = parseFloat(parts[2]);
+            const alpha = parts[3] ? parseFloat(parts[3]) : 1;
+            
+            if (isNaN(l) || isNaN(c) || isNaN(h)) {
+              return "rgb(79, 70, 229)";
+            }
+            // Grey scale check (low chroma)
+            if (c < 0.03) {
+              const g = Math.round(l * 255);
+              return `rgba(${g}, ${g}, ${g}, ${alpha})`;
+            }
+            
+            let r = 79, g = 70, b = 229;
+            if (h >= 340 || h < 45) {
+              // Red/Pinkish
+              r = 239; g = 68; b = 68;
+            } else if (h >= 45 && h < 110) {
+              // Yellow/Orange
+              r = 245; g = 158; b = 11;
+            } else if (h >= 110 && h < 180) {
+              // Green
+              r = 34; g = 197; b = 94;
+            } else if (h >= 180 && h < 280) {
+              // Blue/Indigo
+              r = 79; g = 70; b = 229;
+            } else {
+              // Purple/Violet
+              r = 168; g = 85; b = 247;
+            }
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+          }
+          return "rgb(79, 70, 229)";
+        });
+      };
+
+      const cleanOklab = (text: string) => {
+        return text.replace(/oklab\(([^)]+)\)/g, (match, values) => {
+          const parts = values.split(/[\s,/]+/).filter(Boolean);
+          const l = parseFloat(parts[0]);
+          const alpha = parts[3] ? parseFloat(parts[3]) : 1;
+          if (isNaN(l)) {
+            return `rgba(79, 70, 229, ${alpha})`;
+          }
+          const g = Math.round(l * 255);
+          return `rgba(${g}, ${g}, ${g}, ${alpha})`;
+        });
+      };
+
+      // Find all style and link tags, extract CSS rules from all readable sheets
+      const rules: string[] = [];
+      for (let i = 0; i < document.styleSheets.length; i++) {
+        const sheet = document.styleSheets[i];
+        try {
+          const sheetRules = sheet.cssRules || sheet.rules;
+          if (sheetRules && sheetRules.length > 0) {
+            const sheetCss: string[] = [];
+            for (let j = 0; j < sheetRules.length; j++) {
+              sheetCss.push(sheetRules[j].cssText);
+            }
+            rules.push(sheetCss.join("\n"));
+            
+            const owner = sheet.ownerNode as HTMLElement | null;
+            if (owner) {
+              originalStyles.push({
+                element: owner as HTMLStyleElement | HTMLLinkElement,
+                disabled: (owner as any).disabled || false
+              });
+              (owner as any).disabled = true;
+            }
+          }
+        } catch (e) {
+          // Cross-origin sheet (like Google Fonts) - leave enabled
+        }
+      }
+
+      // Combine all rules, clean up oklch/oklab to standard rgb/rgba fallbacks
+      const combinedCssText = rules.join("\n");
+      const cleanedText = cleanOklab(cleanOklch(combinedCssText));
+
+      // Inject temporary patched style element containing clean styles
+      const patchedEl = document.createElement("style");
+      patchedEl.setAttribute("data-html2canvas-patched", "true");
+      patchedEl.textContent = cleanedText;
+      document.head.appendChild(patchedEl);
+      patchedStyleElements.push(patchedEl);
+
       const { default: html2canvas } = await import("html2canvas");
       
       const canvas = await html2canvas(reportRef.current, {
@@ -37,20 +135,46 @@ export default function WebsiteAudit({ selectedClient, onRunAudit, onNavigate }:
         windowHeight: reportRef.current.scrollHeight,
       });
 
-      const imgData = canvas.toDataURL("image/png");
       const clientNameSanitized = selectedClient?.name?.toLowerCase().replace(/[^a-z0-9]+/g, "-") || "report";
       const timestamp = new Date().toISOString().split("T")[0];
       
-      const tempLink = document.createElement("a");
-      tempLink.href = imgData;
-      tempLink.download = `seo-site-audit-${clientNameSanitized}-${timestamp}.png`;
-      document.body.appendChild(tempLink);
-      tempLink.click();
-      document.body.removeChild(tempLink);
+      await new Promise<void>((resolve, reject) => {
+        canvas.toBlob((blob) => {
+          if (!blob) {
+            reject(new Error("Failed to generate image blob representation"));
+            return;
+          }
+          try {
+            const blobUrl = URL.createObjectURL(blob);
+            const tempLink = document.createElement("a");
+            tempLink.href = blobUrl;
+            tempLink.download = `seo-site-audit-${clientNameSanitized}-${timestamp}.png`;
+            document.body.appendChild(tempLink);
+            tempLink.click();
+            
+            setTimeout(() => {
+              if (tempLink.parentNode) {
+                document.body.removeChild(tempLink);
+              }
+              URL.revokeObjectURL(blobUrl);
+              resolve();
+            }, 150);
+          } catch (e) {
+            reject(e);
+          }
+        }, "image/png");
+      });
     } catch (err: any) {
       console.error("Screenshot capture process failure:", err);
       setErrorStatus("Failed to make screenshot: " + (err.message || err));
     } finally {
+      // RESTORE ALL ORIGINAL STYLES FIRST
+      for (const patchedEl of patchedStyleElements) {
+        patchedEl.remove();
+      }
+      for (const item of originalStyles) {
+        item.element.disabled = item.disabled;
+      }
       setIsCapturing(false);
     }
   };
