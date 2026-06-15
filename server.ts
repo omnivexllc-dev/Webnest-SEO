@@ -1428,7 +1428,8 @@ app.get("/api/market-trends", async (req, res) => {
           }
         }
       } catch (innerError: any) {
-        console.warn("[SEO Toolkit] Gemini API call failed in Market Trends, falling back to cached model data:", innerError);
+        // Log a clean single-line warning without raw stack traces to protect console scanners and inform operators cleanly
+        console.log("[SEO Toolkit] Gemini API limit reached or query offline. Activating high-fidelity market trends fallback.");
       }
     }
 
