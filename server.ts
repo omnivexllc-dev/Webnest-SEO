@@ -269,64 +269,74 @@ app.get("/api/clients", (req, res) => {
 });
 
 app.post("/api/clients", (req, res) => {
-  const { name, url, businessCategory, location, keywords } = req.body;
-  if (!name || !url) {
-    res.status(400).json({ error: "Missing client name or URL" });
-    return;
-  }
-  const db = readDB();
-  
-  // Create solid clean ID
-  const id = name.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase();
-  
-  const kwList = Array.isArray(keywords) 
-    ? keywords.filter(Boolean) 
-    : (typeof keywords === "string" ? keywords.split(",").map(k => k.trim()).filter(Boolean) : []);
+  try {
+    const { name, url, businessCategory, location, keywords } = req.body;
+    if (!name || !url) {
+      res.status(400).json({ error: "Missing client name or URL" });
+      return;
+    }
+    const db = readDB();
+    
+    // Create solid clean and strictly unique ID
+    const baseId = name.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase() || "client";
+    let id = baseId;
+    let counter = 1;
+    while (db.clients.some(c => c.id === id) || db.rankHistory[id] || db.audits[id]) {
+      id = `${baseId}-${counter}`;
+      counter++;
+    }
+    
+    const kwList = Array.isArray(keywords) 
+      ? keywords.filter(Boolean) 
+      : (typeof keywords === "string" ? keywords.split(",").map(k => k.trim()).filter(Boolean) : []);
 
-  const newClient = {
-    id,
-    name,
-    url,
-    businessCategory: businessCategory || "General Business",
-    location: location || "Global",
-    keywords: kwList,
-    onboardingDate: new Date().toISOString().split("T")[0],
-    seoScore: 0,
-    rankingKeywordsCount: 0,
-    monthlyTraffic: 50, // Starting baseline
-    visibilityScore: 5,
-    tasksCompleted: 0,
-    totalTasks: 8,
-  };
+    const newClient = {
+      id,
+      name,
+      url,
+      businessCategory: businessCategory || "General Business",
+      location: location || "Global",
+      keywords: kwList,
+      onboardingDate: new Date().toISOString().split("T")[0],
+      seoScore: 0,
+      rankingKeywordsCount: kwList.length,
+      monthlyTraffic: 50, // Starting baseline
+      visibilityScore: 5,
+      tasksCompleted: 0,
+      totalTasks: 8,
+    };
 
-  db.clients.push(newClient);
+    db.clients.push(newClient);
 
-  // Initialize simulated rank history for the client's keywords
-  const initialHistory: any[] = [];
-  kwList.forEach((kw, index) => {
-    const seedRank = Math.floor(Math.random() * 40) + 21; // between 21 and 60
-    const historyData = [
-      { date: "06-08", rank: seedRank + 4, mobileRank: seedRank + 5, localRank: seedRank + 2 },
-      { date: "06-10", rank: seedRank + 2, mobileRank: seedRank + 3, localRank: seedRank + 1 },
-      { date: "06-12", rank: seedRank + 1, mobileRank: seedRank + 1, localRank: seedRank },
-      { date: "06-14", rank: seedRank, mobileRank: seedRank, localRank: seedRank }
-    ];
-    initialHistory.push({
-      id: `r-new-${id}-${index}`,
-      clientId: id,
-      keyword: kw,
-      currentRank: seedRank,
-      previousRank: seedRank + 4,
-      volume: Math.floor(Math.random() * 500) + 100,
-      history: historyData
+    // Initialize simulated rank history for the client's keywords
+    const initialHistory: any[] = [];
+    kwList.forEach((kw, index) => {
+      const seedRank = Math.floor(Math.random() * 40) + 21; // between 21 and 60
+      const historyData = [
+        { date: "06-08", rank: seedRank + 4, mobileRank: seedRank + 5, localRank: seedRank + 2 },
+        { date: "06-10", rank: seedRank + 2, mobileRank: seedRank + 3, localRank: seedRank + 1 },
+        { date: "06-12", rank: seedRank + 1, mobileRank: seedRank + 1, localRank: seedRank },
+        { date: "06-14", rank: seedRank, mobileRank: seedRank, localRank: seedRank }
+      ];
+      initialHistory.push({
+        id: `r-new-${id}-${index}`,
+        clientId: id,
+        keyword: kw,
+        currentRank: seedRank,
+        previousRank: seedRank + 4,
+        volume: Math.floor(Math.random() * 500) + 100,
+        history: historyData
+      });
     });
-  });
 
-  db.rankHistory[id] = initialHistory;
-  db.clients[db.clients.length - 1].rankingKeywordsCount = kwList.length;
+    db.rankHistory[id] = initialHistory;
 
-  writeDB(db);
-  res.status(201).json(newClient);
+    writeDB(db);
+    res.status(201).json(newClient);
+  } catch (err: any) {
+    console.error("Failed to onboard client:", err);
+    res.status(500).json({ error: "Failed to onboard client on server database", details: err?.message || err });
+  }
 });
 
 app.delete("/api/clients/:id", (req, res) => {
