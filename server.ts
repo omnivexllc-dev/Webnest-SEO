@@ -12,6 +12,10 @@ const PORT = 3000;
 const DB_FILE = path.join(process.cwd(), "seo_db.json");
 
 // Middleware
+app.use((req, res, next) => {
+  console.log(`[Express] Received request: ${req.method} ${req.url}`);
+  next();
+});
 app.use(express.json());
 
 // Initialize Gemini SDK with telemetry headers

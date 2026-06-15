@@ -236,51 +236,59 @@
         "duplicateContentFound": false,
         "h1Exists": false,
         "brokenLinksCount": 2,
-        "speedScore": 72,
+        "speedScore": 74,
         "isMobileFriendly": true,
         "schemaMarkupFound": false,
-        "internalLinkingScore": 65,
+        "internalLinkingScore": 60,
         "coreWebVitals": {
-          "lcp": 2.8,
+          "lcp": 2.9,
           "cls": 0.12,
           "fid": 45
         },
-        "descriptionText": "WebNest is the premier web design and development agency in Durgapur, West Bengal. We build high-performance e-commerce portals, custom enterprise SaaS, and beautiful, lightning-fast React websites with professional SEO.",
+        "descriptionText": "WebNest is the premier web design and development company in Durgapur, West Bengal. Elevate your presence with stunning custom responsive layouts, high-performance e-commerce portals, powerful enterprise software, and growth-driven local SEO built to maximize organic clicks.",
         "h1Text": "",
-        "schemaType": "",
+        "schemaType": "None",
         "titleText": "WebNest | Best Web Design & Development Company in Durgapur, West Bengal"
       },
       "fixList": [
         {
-          "id": "missing-h1-tag",
-          "title": "Add a single H1 header tag to the home page hero section",
-          "description": "The home page currently has no <h1> element. Change the main hero container wrapper header (currently styled with Tailwind as 'text-4xl md:text-6xl font-extrabold' inside the hero component) from a div or h2 tag to a semantic h1 tag containing 'Web Design & Development Company in Durgapur' to establish immediate keyword hierarchy.",
+          "id": "missing-h1-header",
+          "title": "Establish Semantic Hierarchy with an H1 Tag",
+          "description": "The homepage does not have an <h1> tag. Locate your primary hero headline (currently styled as an <h2> or plain <div>) and replace or wrap it in a single <h1> element reading 'Web Design & Development Company in Durgapur' to signal content priority to crawlers.",
           "priority": "critical",
           "category": "On-Page SEO",
           "impact": "high"
         },
         {
-          "id": "missing-structured-schema",
-          "title": "Implement LocalBusiness and ProfessionalService JSON-LD Schema",
-          "description": "No schema markup was detected. Inject a JSON-LD structured script tag into the Next.js/Vercel head template designating Webnest as a ProfessionalService or LocalBusiness with properties including name, address (Durgapur, West Bengal), geo-coordinates, telephone, and sameAs links to establish local entity authority with search engines.",
-          "priority": "moderate",
-          "category": "Structured Data",
+          "id": "implement-structured-data",
+          "title": "Add JSON-LD LocalBusiness and Service Schema",
+          "description": "No schema markup was detected. Create and inject a JSON-LD structured data block containing 'ProfessionalService' and 'LocalBusiness' schemas in your Vercel app's document head. Specify details for 'Webnest', business category 'website design, website development', and location coordinates in Durgapur, West Bengal.",
+          "priority": "critical",
+          "category": "Technical SEO",
           "impact": "high"
         },
         {
-          "id": "lcp-cls-optimization",
-          "title": "Optimize Largest Contentful Paint (LCP) and Cumulative Layout Shift (CLS)",
-          "description": "The hero image or CSS-heavy animations are delaying the LCP to 2.8s and causing a 0.12 CLS. To resolve this, apply the 'priority' attribute to the Hero Next.js Image component to enable preloading, and define explicit height/width dimensions on parent grid elements to reserve space during hydration, eliminating layout shifts.",
+          "id": "optimize-layout-shifts",
+          "title": "Reduce Cumulative Layout Shift (CLS)",
+          "description": "The Cumulative Layout Shift is 0.12, which is above the optimal 0.1 threshold. Add explicit 'width' and 'height' descriptors or assign 'aspect-ratio' attributes within your CSS files to container elements and images in the portfolio/hero sections to reserve visual space before loading.",
           "priority": "moderate",
           "category": "Performance",
           "impact": "medium"
         },
         {
-          "id": "broken-links-cleanups",
-          "title": "Fix broken social and menu placeholder links",
-          "description": "Two dead links pointing to empty href attributes ('#') or placeholder paths were detected in the footer component. Update the social icons (likely Twitter/Facebook placeholders) with absolute valid URLs or use dynamic event-based handlers to prevent search crawlers from hitting dead ends.",
+          "id": "preload-lcp-assets",
+          "title": "Preload Largest Contentful Paint Hero Graphic",
+          "description": "The LCP takes 2.9 seconds to load, delaying main page paint times. Insert `<link rel=\"preload\" fetchpriority=\"high\" as=\"image\" href=\"/path-to-hero-image.png\" type=\"image/webp\">` in your head element and ensure the asset is fully compressed and hosted in modern next-gen formats like WebP or AVIF.",
+          "priority": "moderate",
+          "category": "Performance",
+          "impact": "medium"
+        },
+        {
+          "id": "enhance-internal-linking",
+          "title": "Improve Internal Architecture and Deep Linking",
+          "description": "Your current internal linking score is 60. Transition away from relying solely on home page section anchor tags. Build crawlable subpages for your primary services (such as individual Web Design, E-commerce, and SEO service landing pages) and link to them using exact-match or contextual anchor texts.",
           "priority": "low",
-          "category": "Crawlability",
+          "category": "On-Page SEO",
           "impact": "medium"
         }
       ]
@@ -844,5 +852,6 @@
         "Compress heavy imagery portfolio weights on home domain."
       ]
     }
-  ]
+  ],
+  "backlinks": {}
 }

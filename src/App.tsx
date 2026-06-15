@@ -56,7 +56,7 @@ export default function App() {
     setIsGlobalLoading(true);
     setApiError(null);
     try {
-      const res = await fetchWithTimeout("/api/clients", {}, 15000);
+      const res = await fetchWithTimeout("/api/clients", { method: "GET" }, 15000);
       if (res.ok) {
         const data = await res.json();
         setClients(data);
@@ -79,7 +79,7 @@ export default function App() {
   const syncClientState = async (clientId: string) => {
     setIsGlobalLoading(true);
     try {
-      const res = await fetchWithTimeout("/api/clients", {}, 15000);
+      const res = await fetchWithTimeout("/api/clients", { method: "GET" }, 15000);
       if (res.ok) {
         const data: Client[] = await res.json();
         setClients(data);
