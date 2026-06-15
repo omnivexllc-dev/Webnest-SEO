@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { 
   BarChart2, Users, FileText, Globe, Award, Sparkles, MapPin, 
   Bot, Zap, Settings, ShieldCheck, Plus, Check, FolderOpen, ChevronDown, Menu, X, Key,
-  AlertTriangle, Loader2
+  AlertTriangle, Loader2, Link2
 } from "lucide-react";
 import Dashboard from "./components/Dashboard";
 import ClientOnboarding from "./components/ClientOnboarding";
@@ -15,6 +15,7 @@ import AISEOAgent from "./components/AISEOAgent";
 import Automations from "./components/Automations";
 import Reports from "./components/Reports";
 import KeywordOpportunity from "./components/KeywordOpportunity";
+import BacklinkAuditor from "./components/BacklinkAuditor";
 import { Client } from "./types";
 
 export default function App() {
@@ -226,6 +227,7 @@ export default function App() {
     { id: "writer", label: "AI Content Writer", icon: FileText },
     { id: "rankings", label: "SERP Position Tracks", icon: Sparkles },
     { id: "opportunities", label: "Keyword Opportunities", icon: Key },
+    { id: "backlinks", label: "Backlink Explorer", icon: Link2 },
     { id: "local-seo", label: "Local Maps Booster", icon: MapPin },
     { id: "ai-agent", label: "AI Strategy Coach", icon: Bot },
     { id: "automations", label: "Autopilots Box", icon: Zap },
@@ -485,6 +487,13 @@ export default function App() {
           {activeTab === "opportunities" && (
             <KeywordOpportunity 
               selectedClient={selectedClient}
+              onNavigate={setActiveTab}
+            />
+          )}
+
+          {activeTab === "backlinks" && (
+            <BacklinkAuditor 
+              selectedClient={selectedClient} 
               onNavigate={setActiveTab}
             />
           )}
