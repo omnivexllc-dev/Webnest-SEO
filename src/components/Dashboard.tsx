@@ -4,6 +4,7 @@ import {
   BarChart2, ShieldCheck, Zap, AlertTriangle, PlusCircle, ArrowRight
 } from "lucide-react";
 import { Client } from "../types";
+import MarketTrends from "./MarketTrends";
 
 interface DashboardProps {
   clients: Client[];
@@ -313,6 +314,9 @@ export default function Dashboard({
           )}
         </div>
       </div>
+
+      {/* Market Trends Section */}
+      <MarketTrends />
     </div>
   );
 }

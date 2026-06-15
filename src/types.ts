@@ -121,3 +121,22 @@ export interface SEOReport {
   workCompleted: string[];
   nextSteps: string[];
 }
+
+export interface MarketTrendUpdate {
+  title: string;
+  date: string;
+  severity: string; // or union like "High" | "Medium" | "Low"
+  summary: string;
+  actionableInsight: string;
+}
+
+export interface MarketTrendSource {
+  title: string;
+  url: string;
+}
+
+export interface MarketTrendData {
+  summary: string;
+  updates: MarketTrendUpdate[];
+  sources: MarketTrendSource[];
+}

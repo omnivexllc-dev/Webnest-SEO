@@ -251,6 +251,40 @@ export default function WebsiteAudit({ selectedClient, onRunAudit, onNavigate }:
     }
   };
 
+  // Compute Estimated Ranking Impact score dynamically based on fixList:
+  const getRankingImpactScore = (rep: AuditReport) => {
+    if (!rep || !rep.fixList) return 0;
+    const totalWeight = rep.fixList.reduce((acc, fix) => {
+      switch (fix.impact) {
+        case "high": return acc + 25;
+        case "medium": return acc + 15;
+        default: return acc + 5;
+      }
+    }, 0);
+    // Normalize and cap between 10 and 100
+    return Math.min(Math.max(totalWeight, 10), 100);
+  };
+
+  const getRankingImpactText = (score: number) => {
+    if (score >= 65) return "Critical Rank Opportunities";
+    if (score >= 35) return "Significant Visibility Lift";
+    return "Minor Positional Wins";
+  };
+
+  const getRankingImpactColorClass = (score: number) => {
+    if (score >= 65) return "text-indigo-600";
+    if (score >= 35) return "text-purple-600";
+    return "text-cyan-600";
+  };
+
+  const getRankingImpactStrokeColor = (score: number) => {
+    if (score >= 65) return "#6366f1"; // Indigo
+    if (score >= 35) return "#a855f7"; // Purple
+    return "#06b6d4"; // Cyan
+  };
+
+  const rankingImpactScore = report ? getRankingImpactScore(report) : 0;
+
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Header and Controls */}
@@ -313,7 +347,7 @@ export default function WebsiteAudit({ selectedClient, onRunAudit, onNavigate }:
       {report && (
         <div className="space-y-8 p-4 bg-slate-50/50 rounded-2xl border border-slate-100" ref={reportRef}>
           {/* Top Score Summary cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             
             {/* SEO Score Circular Graph */}
             <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm flex flex-col items-center justify-center space-y-4 text-center">
@@ -352,6 +386,50 @@ export default function WebsiteAudit({ selectedClient, onRunAudit, onNavigate }:
                 report.score >= 75 ? "text-green-600" : report.score >= 50 ? "text-amber-600" : "text-rose-500"
               }`}>
                 {report.score >= 75 ? "Optimal Structural Integrity" : report.score >= 50 ? "Requires Intermediate Optimization" : "Critical SEO Risks Detected"}
+              </p>
+            </div>
+
+            {/* Estimated Ranking Impact Score Circular Graph */}
+            <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm flex flex-col items-center justify-center space-y-4 text-center">
+              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center justify-center gap-1">
+                <span>Est. Ranking Impact</span>
+                <span className="group relative cursor-help">
+                  <HelpCircle className="w-3.5 h-3.5 text-slate-300 hover:text-slate-500" />
+                  <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-slate-900 text-white text-[10px] rounded-lg opacity-0 group-hover:opacity-100 transition pointer-events-none leading-normal font-normal">
+                    Aggregate search visibility score uplift opportunity from implementing optimal fixes.
+                  </span>
+                </span>
+              </span>
+              <div className="relative w-36 h-36 flex items-center justify-center">
+                <svg className="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
+                  <circle
+                    cx="60"
+                    cy="60"
+                    r="52"
+                    fill="none"
+                    stroke="#f1f5f9"
+                    strokeWidth="8"
+                  />
+                  <circle
+                    cx="60"
+                    cy="60"
+                    r="52"
+                    fill="none"
+                    stroke={getRankingImpactStrokeColor(rankingImpactScore)}
+                    strokeWidth="10"
+                    strokeDasharray={2 * Math.PI * 52}
+                    strokeDashoffset={2 * Math.PI * 52 * (1 - rankingImpactScore / 100)}
+                    strokeLinecap="round"
+                    className="transition-all duration-1000"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-4xl font-extrabold font-display text-slate-900 tracking-tight">{rankingImpactScore}</span>
+                  <span className="text-[10px] text-slate-400 uppercase font-sans">/ 100 Points</span>
+                </div>
+              </div>
+              <p className={`text-xs font-bold ${getRankingImpactColorClass(rankingImpactScore)}`}>
+                {getRankingImpactText(rankingImpactScore)}
               </p>
             </div>
 
