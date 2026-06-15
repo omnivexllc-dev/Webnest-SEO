@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { 
   BarChart2, Users, FileText, Globe, Award, Sparkles, MapPin, 
-  Bot, Zap, Settings, ShieldCheck, Plus, Check, FolderOpen, ChevronDown, Menu, X, Key
+  Bot, Zap, Settings, ShieldCheck, Plus, Check, FolderOpen, ChevronDown, Menu, X, Key,
+  AlertTriangle, Loader2
 } from "lucide-react";
 import Dashboard from "./components/Dashboard";
 import ClientOnboarding from "./components/ClientOnboarding";
@@ -23,14 +24,38 @@ export default function App() {
   const [isClientDropdownOpen, setIsClientDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  const [isGlobalLoading, setIsGlobalLoading] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
+
+  const fetchWithTimeout = async (url: string, options: RequestInit = {}, timeoutMs = 35000) => {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal
+      });
+      clearTimeout(id);
+      return response;
+    } catch (err: any) {
+      clearTimeout(id);
+      if (err.name === "AbortError") {
+        throw new Error("Request timed out. The server might be experiencing high load.");
+      }
+      throw err;
+    }
+  };
+
   // Load clients list on mount
   useEffect(() => {
     fetchClients();
   }, []);
 
   const fetchClients = async () => {
+    setIsGlobalLoading(true);
+    setApiError(null);
     try {
-      const res = await fetch("/api/clients");
+      const res = await fetchWithTimeout("/api/clients", {}, 15000);
       if (res.ok) {
         const data = await res.json();
         setClients(data);
@@ -38,16 +63,22 @@ export default function App() {
           // Initialize active client workspace
           setSelectedClient(data[0]);
         }
+      } else {
+        throw new Error(`Server returned status ${res.status}`);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failing to connect to server clients list:", err);
+      setApiError(`Could not load clients: ${err.message || err}`);
+    } finally {
+      setIsGlobalLoading(false);
     }
   };
 
   // Sync state for a client's metrics (e.g. following completions)
   const syncClientState = async (clientId: string) => {
+    setIsGlobalLoading(true);
     try {
-      const res = await fetch("/api/clients");
+      const res = await fetchWithTimeout("/api/clients", {}, 15000);
       if (res.ok) {
         const data: Client[] = await res.json();
         setClients(data);
@@ -55,9 +86,14 @@ export default function App() {
         if (match) {
           setSelectedClient(match);
         }
+      } else {
+        throw new Error(`Server returned status ${res.status}`);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("State sync failed:", err);
+      setApiError(`Failed to sync client state: ${err.message || err}`);
+    } finally {
+      setIsGlobalLoading(false);
     }
   };
 
@@ -69,57 +105,81 @@ export default function App() {
     location: string;
     keywords: string[];
   }) => {
+    setIsGlobalLoading(true);
+    setApiError(null);
     try {
-      const res = await fetch("/api/clients", {
+      const res = await fetchWithTimeout("/api/clients", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(clientData)
-      });
+      }, 20000);
       if (res.ok) {
         const data = await res.json();
         setClients(prev => [...prev, data]);
         setSelectedClient(data);
         return data;
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || `Server error: ${res.status}`);
       }
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      console.error("Client onboarding error:", err);
+      setApiError(`Onboarding failed: ${err.message || err}`);
+    } finally {
+      setIsGlobalLoading(false);
     }
     return null;
   };
 
   // Run Crawl Audit action
   const handleRunAudit = async (clientId: string, url: string) => {
+    setIsGlobalLoading(true);
+    setApiError(null);
     try {
-      const res = await fetch("/api/audit/run", {
+      const res = await fetchWithTimeout("/api/audit/run", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ clientId, url })
-      });
+      }, 60000); // 60s timeout since scanning/summarizing can be slow
       if (res.ok) {
         const data = await res.json();
         // Sync score dynamically back to clients portfolio
         await syncClientState(clientId);
         return data;
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || `Server error: ${res.status}`);
       }
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      console.error("Audit scan failed:", err);
+      setApiError(`Audit failed: ${err.message || err}`);
+    } finally {
+      setIsGlobalLoading(false);
     }
     return null;
   };
 
   // Competitors trigger action
   const handleRunCompetitors = async (clientId: string) => {
+    setIsGlobalLoading(true);
+    setApiError(null);
     try {
-      const res = await fetch("/api/competitors/run", {
+      const res = await fetchWithTimeout("/api/competitors/run", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ clientId })
-      });
+      }, 60000); // 60s timeout for competitive audit/analysis via Gemini
       if (res.ok) {
         return await res.json();
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || `Server error: ${res.status}`);
       }
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      console.error("Competitors analysis failed:", err);
+      setApiError(`Competitor audit failed: ${err.message || err}`);
+    } finally {
+      setIsGlobalLoading(false);
     }
     return null;
   };
@@ -133,19 +193,27 @@ export default function App() {
     keywords: string[];
     customPrompt?: string;
   }) => {
+    setIsGlobalLoading(true);
+    setApiError(null);
     try {
-      const res = await fetch("/api/writer/generate", {
+      const res = await fetchWithTimeout("/api/writer/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(articleData)
-      });
+      }, 75000); // Large generation requests need ample time
       if (res.ok) {
         const data = await res.json();
         await syncClientState(articleData.clientId);
         return data;
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || `Server error: ${res.status}`);
       }
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      console.error("AI article generation failed:", err);
+      setApiError(`AI Generation failed: ${err.message || err}`);
+    } finally {
+      setIsGlobalLoading(false);
     }
     return null;
   };
@@ -165,10 +233,33 @@ export default function App() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans flex flex-col antialiased">
+    <div className="min-h-screen bg-slate-50 font-sans flex flex-col antialiased relative">
       
+      {/* Dynamic Indefinite Global Progress Bar */}
+      {isGlobalLoading && (
+        <div className="fixed top-0 left-0 right-0 h-1.5 bg-indigo-100 z-50">
+          <div className="h-full bg-indigo-600 animate-pulse w-full"></div>
+        </div>
+      )}
+
+      {/* API Timeout Warning or General Errors Banner */}
+      {apiError && (
+        <div className="bg-amber-50 border-b border-amber-200 text-amber-900 text-xs py-3 px-4 flex items-center justify-between gap-3 sticky top-0 z-50 print:hidden animate-fade-in shadow-xs">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+            <span className="font-medium">{apiError}</span>
+          </div>
+          <button 
+            onClick={() => setApiError(null)} 
+            className="text-amber-500 hover:text-amber-700 font-extrabold uppercase tracking-wide px-2 py-1 rounded-lg border border-amber-205 hover:bg-amber-100 transition cursor-pointer text-[10px]"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
       {/* Top Navigation Frame - Hidden on Printing PDF */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-40 print:hidden shadow-xs">
+      <header className="bg-white border-b border-slate-200 sticky top-0 z-45 print:hidden shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             
@@ -185,6 +276,12 @@ export default function App() {
 
             {/* Selected Client Workspace Selection */}
             <div className="hidden sm:flex items-center gap-4">
+              {isGlobalLoading && (
+                <div className="flex items-center gap-1.2 px-2 py-1 bg-indigo-50 border border-indigo-100/50 rounded-lg text-indigo-600 text-[9px] font-bold font-mono animate-pulse">
+                  <Loader2 className="w-3 h-3 animate-spin mr-1 text-indigo-600" />
+                  <span>CRAWLING / SYNCING...</span>
+                </div>
+              )}
               <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider font-mono">Workspace:</span>
               {selectedClient ? (
                 <div className="relative">
