@@ -4,6 +4,7 @@ import fs from "fs";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI, Type } from "@google/genai";
 import dotenv from "dotenv";
+import cors from "cors";
 
 dotenv.config();
 
@@ -12,6 +13,7 @@ const PORT = 3000;
 const DB_FILE = path.join(process.cwd(), "seo_db.json");
 
 // Middleware
+app.use(cors());
 app.use((req, res, next) => {
   console.log(`[Express] Received request: ${req.method} ${req.url}`);
   next();
@@ -2028,6 +2030,11 @@ app.get("/api/market-trends", async (req, res) => {
     console.error("Market trends exception:", error);
     res.status(500).json({ error: "Failed to collect search market trends updates.", details: error?.message || error });
   }
+});
+
+app.use("/api", (req, res) => {
+  console.log(`[Express API 404 TRAP] HTTP ${req.method} ${req.url} (originalUrl: ${req.originalUrl})`);
+  res.status(404).json({ error: `API route not found in Express. Route: ${req.originalUrl}` });
 });
 
 // Vite Middleware & Asset Server Bootstrapper

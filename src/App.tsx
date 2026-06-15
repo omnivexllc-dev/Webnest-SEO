@@ -56,7 +56,8 @@ export default function App() {
     setIsGlobalLoading(true);
     setApiError(null);
     try {
-      const res = await fetchWithTimeout("/api/clients", { method: "GET" }, 15000);
+      const targetUrl = "/api/clients";
+      const res = await fetchWithTimeout(targetUrl, { method: "GET" }, 15000);
       if (res.ok) {
         const data = await res.json();
         setClients(data);
@@ -65,7 +66,7 @@ export default function App() {
           setSelectedClient(data[0]);
         }
       } else {
-        throw new Error(`Server returned status ${res.status}`);
+        throw new Error(`Server returned status ${res.status} for ${targetUrl} - ${res.statusText}`);
       }
     } catch (err: any) {
       console.error("Failing to connect to server clients list:", err);
