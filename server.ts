@@ -377,16 +377,17 @@ app.post("/api/audit/run", async (req, res) => {
       const htmlText = await fetchRes.text();
       crawledSuccess = true;
 
-      // Extract title
+      // Extract title matching uppercase/lowercase tags, whitespace
       const titleMatch = htmlText.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
       if (titleMatch && titleMatch[1]) {
         titleText = titleMatch[1].trim();
         titleExists = true;
       }
 
-      // Extract meta description
-      const descMatch = htmlText.match(/<meta[^>]+name="description"[^>]+content="([^"]*)"/i) || 
-                         htmlText.match(/<meta[^>]+content="([^"]*)"[^>]+name="description"/i);
+      // Extract meta description making regex extremely robust (supporting single/double quotes, extra whitespaces, name/content order)
+      const descMatch = htmlText.match(/<meta[^>]+name\s*=\s*["']description["'][^>]+content\s*=\s*["']([^"']*)["']/i) || 
+                         htmlText.match(/<meta[^>]+content\s*=\s*["']([^"']*)["'][^>]+name\s*=\s*["']description["']/i) ||
+                         htmlText.match(/<meta[^>]+name\s*=\s*["']description["'][^>]*content\s*=\s*([^>\s"' ]+)/i);
       if (descMatch && descMatch[1]) {
         descriptionText = descMatch[1].trim();
         descriptionExists = true;
@@ -413,8 +414,9 @@ app.post("/api/audit/run", async (req, res) => {
     let auditResult;
 
     if (!isMock) {
-      // Real Gemini API Call with structured schema fallback
-      const prompt = `Conduct a technical SEO and performance audit for the following website:
+      try {
+        // Real Gemini API Call with structured schema fallback
+        const prompt = `Conduct a technical SEO and performance audit for the following website:
 URL: ${url}
 Business Name: ${clientInfo.name}
 Business Category: ${clientInfo.businessCategory}
@@ -433,66 +435,69 @@ Provide a comprehensive JSON report containing:
 2. "metadata" which includes boolean values and string indicators for titles, duplicateContentFound, h1, brokenLinksCount, speedScore, isMobileFriendly, schemaMarkupFound, schemaType, internalLinkingScore, and "coreWebVitals" details (LCP value, CLS value, FID index).
 3. "fixList": a list of specific, highly customized fix items. Detail exactly what script, structure or selector needs editing. Each fix has "id", "title", "description", "priority" ("critical" | "moderate" | "low"), "category", and "impact" ("high" | "medium" | "low").`;
 
-      const response = await ai.models.generateContent({
-        model: "gemini-3.5-flash",
-        contents: prompt,
-        config: {
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: Type.OBJECT,
-            properties: {
-              score: { type: Type.INTEGER },
-              metadata: {
-                type: Type.OBJECT,
-                properties: {
-                  titleExists: { type: Type.BOOLEAN },
-                  titleText: { type: Type.STRING },
-                  descriptionExists: { type: Type.BOOLEAN },
-                  descriptionText: { type: Type.STRING },
-                  duplicateContentFound: { type: Type.BOOLEAN },
-                  h1Exists: { type: Type.BOOLEAN },
-                  h1Text: { type: Type.STRING },
-                  brokenLinksCount: { type: Type.INTEGER },
-                  speedScore: { type: Type.INTEGER },
-                  isMobileFriendly: { type: Type.BOOLEAN },
-                  schemaMarkupFound: { type: Type.BOOLEAN },
-                  schemaType: { type: Type.STRING },
-                  internalLinkingScore: { type: Type.INTEGER },
-                  coreWebVitals: {
-                    type: Type.OBJECT,
-                    properties: {
-                      lcp: { type: Type.NUMBER },
-                      cls: { type: Type.NUMBER },
-                      fid: { type: Type.INTEGER }
-                    },
-                    required: ["lcp", "cls", "fid"]
-                  }
-                },
-                required: ["titleExists", "descriptionExists", "duplicateContentFound", "h1Exists", "brokenLinksCount", "speedScore", "isMobileFriendly", "schemaMarkupFound", "internalLinkingScore", "coreWebVitals"]
-              },
-              fixList: {
-                type: Type.ARRAY,
-                items: {
+        const response = await ai.models.generateContent({
+          model: "gemini-3.5-flash",
+          contents: prompt,
+          config: {
+            responseMimeType: "application/json",
+            responseSchema: {
+              type: Type.OBJECT,
+              properties: {
+                score: { type: Type.INTEGER },
+                metadata: {
                   type: Type.OBJECT,
                   properties: {
-                    id: { type: Type.STRING },
-                    title: { type: Type.STRING },
-                    description: { type: Type.STRING },
-                    priority: { type: Type.STRING },
-                    category: { type: Type.STRING },
-                    impact: { type: Type.STRING }
+                    titleExists: { type: Type.BOOLEAN },
+                    titleText: { type: Type.STRING },
+                    descriptionExists: { type: Type.BOOLEAN },
+                    descriptionText: { type: Type.STRING },
+                    duplicateContentFound: { type: Type.BOOLEAN },
+                    h1Exists: { type: Type.BOOLEAN },
+                    h1Text: { type: Type.STRING },
+                    brokenLinksCount: { type: Type.INTEGER },
+                    speedScore: { type: Type.INTEGER },
+                    isMobileFriendly: { type: Type.BOOLEAN },
+                    schemaMarkupFound: { type: Type.BOOLEAN },
+                    schemaType: { type: Type.STRING },
+                    internalLinkingScore: { type: Type.INTEGER },
+                    coreWebVitals: {
+                      type: Type.OBJECT,
+                      properties: {
+                        lcp: { type: Type.NUMBER },
+                        cls: { type: Type.NUMBER },
+                        fid: { type: Type.INTEGER }
+                      },
+                      required: ["lcp", "cls", "fid"]
+                    }
                   },
-                  required: ["id", "title", "description", "priority", "category", "impact"]
+                  required: ["titleExists", "descriptionExists", "duplicateContentFound", "h1Exists", "brokenLinksCount", "speedScore", "isMobileFriendly", "schemaMarkupFound", "internalLinkingScore", "coreWebVitals"]
+                },
+                fixList: {
+                  type: Type.ARRAY,
+                  items: {
+                    type: Type.OBJECT,
+                    properties: {
+                      id: { type: Type.STRING },
+                      title: { type: Type.STRING },
+                      description: { type: Type.STRING },
+                      priority: { type: Type.STRING },
+                      category: { type: Type.STRING },
+                      impact: { type: Type.STRING }
+                    },
+                    required: ["id", "title", "description", "priority", "category", "impact"]
+                  }
                 }
-              }
-            },
-            required: ["score", "metadata", "fixList"]
+              },
+              required: ["score", "metadata", "fixList"]
+            }
           }
-        }
-      });
+        });
 
-      if (response.text) {
-        auditResult = JSON.parse(response.text.trim());
+        if (response.text) {
+          auditResult = JSON.parse(response.text.trim());
+        }
+      } catch (innerError: any) {
+        console.log("[SEO Toolkit] Gemini audit API call failed or busy. Activating high-fidelity offline fallback.");
       }
     }
 
@@ -581,6 +586,54 @@ app.get("/api/audit/:clientId", (req, res) => {
     res.status(404).json({ error: "No audit report found for this client. Please run a new audit scan." });
     return;
   }
+  res.json(audit);
+});
+
+// Update manually crawled/overridden HTML header tags
+app.put("/api/audit/:clientId/metadata", (req, res) => {
+  const { clientId } = req.params;
+  const { titleText, descriptionText, h1Text } = req.body;
+  const db = readDB();
+  const audit = db.audits[clientId];
+  
+  if (!audit) {
+    res.status(404).json({ error: "No audit report found to update. Please run a new audit scan first." });
+    return;
+  }
+
+  // Update text values
+  audit.metadata.titleText = titleText || "";
+  audit.metadata.titleExists = (titleText || "").trim().length > 0;
+
+  audit.metadata.descriptionText = descriptionText || "";
+  audit.metadata.descriptionExists = (descriptionText || "").trim().length > 0;
+
+  audit.metadata.h1Text = h1Text || "";
+  audit.metadata.h1Exists = (h1Text || "").trim().length > 0;
+
+  // Recalculate SEO Audit score dynamically to award completed tags
+  let baseScore = audit.score;
+  let hasTitle = audit.metadata.titleExists;
+  let hasDesc = audit.metadata.descriptionExists;
+  let hasH1 = audit.metadata.h1Exists;
+
+  // Simple weighted score update logic
+  let penaltyReduction = 0;
+  if (hasTitle) penaltyReduction += 6;
+  if (hasDesc) penaltyReduction += 10;
+  if (hasH1) penaltyReduction += 5;
+
+  audit.score = Math.min(Math.max(baseScore, 70) + penaltyReduction, 100);
+
+  // Write database updates
+  db.audits[clientId] = audit;
+
+  const clIndex = db.clients.findIndex(c => c.id === clientId);
+  if (clIndex !== -1) {
+    db.clients[clIndex].seoScore = audit.score;
+  }
+
+  writeDB(db);
   res.json(audit);
 });
 

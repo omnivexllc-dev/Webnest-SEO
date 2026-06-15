@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { 
   ShieldCheck, AlertTriangle, Play, Loader2, Info, 
   HelpCircle, ArrowDown, ExternalLink, Check, AlertCircle, Sparkles, Server, Clock,
-  Camera
+  Camera, Edit, X
 } from "lucide-react";
 import { Client, AuditReport } from "../types";
 
@@ -18,6 +18,53 @@ export default function WebsiteAudit({ selectedClient, onRunAudit, onNavigate }:
   const [errorStatus, setErrorStatus] = useState("");
   const [isCapturing, setIsCapturing] = useState(false);
   const reportRef = useRef<HTMLDivElement>(null);
+
+  // States to allow manual editing of Crawler Live Metadata Elements
+  const [isEditingMetadata, setIsEditingMetadata] = useState(false);
+  const [editTitle, setEditTitle] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [editH1, setEditH1] = useState("");
+  const [savingMetadata, setSavingMetadata] = useState(false);
+  const [metadataError, setMetadataError] = useState("");
+
+  const startEditingMetadata = () => {
+    if (!report) return;
+    setEditTitle(report.metadata.titleText || "");
+    setEditDescription(report.metadata.descriptionText || "");
+    setEditH1(report.metadata.h1Text || "");
+    setMetadataError("");
+    setIsEditingMetadata(true);
+  };
+
+  const handleSaveMetadata = async () => {
+    if (!selectedClient || !report) return;
+    setSavingMetadata(true);
+    setMetadataError("");
+    try {
+      const response = await fetch(`/api/audit/${selectedClient.id}/metadata`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          titleText: editTitle,
+          descriptionText: editDescription,
+          h1Text: editH1
+        })
+      });
+      if (response.ok) {
+        const updatedReport = await response.json();
+        setReport(updatedReport);
+        setIsEditingMetadata(false);
+      } else {
+        const errData = await response.json();
+        setMetadataError(errData.error || "Failed to update meta elements.");
+      }
+    } catch (err: any) {
+      console.error("Save metadata error:", err);
+      setMetadataError("Connection failure: Failed to update SEO elements.");
+    } finally {
+      setSavingMetadata(false);
+    }
+  };
 
   // Fallback handler to take a beautiful PDF/PNG element shot
   const handleCaptureScreenshot = async () => {
@@ -569,31 +616,142 @@ export default function WebsiteAudit({ selectedClient, onRunAudit, onNavigate }:
 
           {/* Crawler Live Metadata Details */}
           <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100 space-y-4">
-            <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2">
-              <Server className="w-4 h-4 text-indigo-500" /> Crawled Raw Header Elements
-            </h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
-              {/* Title Tag */}
-              <div className="bg-white border border-slate-100 p-4 rounded-xl space-y-2">
-                <span className="text-[10px] text-slate-400 font-sans font-bold uppercase tracking-wider block">Index Tag &lt;title&gt;</span>
-                {report.metadata.titleText ? (
-                  <p className="text-slate-700 leading-relaxed break-words">{report.metadata.titleText}</p>
-                ) : (
-                  <p className="text-slate-400 italic">No Title Tag was successfully parsed.</p>
-                )}
-              </div>
-
-              {/* Description Tag */}
-              <div className="bg-white border border-slate-100 p-4 rounded-xl space-y-2">
-                <span className="text-[10px] text-slate-400 font-sans font-bold uppercase tracking-wider block">Meta &lt;description&gt;</span>
-                {report.metadata.descriptionText ? (
-                  <p className="text-slate-700 leading-relaxed break-words">{report.metadata.descriptionText}</p>
-                ) : (
-                  <p className="text-slate-400 italic">No Meta Description Tag was successfully parsed.</p>
-                )}
-              </div>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2">
+                <Server className="w-4 h-4 text-indigo-500" /> Crawled Raw Header Elements
+              </h3>
+              {!isEditingMetadata ? (
+                <button
+                  type="button"
+                  onClick={startEditingMetadata}
+                  className="inline-flex items-center gap-1.5 text-[11px] font-bold text-indigo-600 hover:text-indigo-800 bg-white hover:bg-indigo-50 border border-slate-200 hover:border-indigo-100/80 px-3 py-1.5 rounded-xl transition cursor-pointer shadow-2xs"
+                >
+                  <Edit className="w-3.5 h-3.5" /> Verify Added Index Tag & Meta Description
+                </button>
+              ) : null}
             </div>
+            
+            {isEditingMetadata ? (
+              <div className="bg-white p-5 rounded-xl border border-slate-200/85 space-y-4 animate-fade-in" id="metadata-override-form">
+                <div className="text-xs text-slate-600 leading-relaxed bg-indigo-50/50 p-3.5 rounded-xl border border-indigo-100/50">
+                  <span className="font-extrabold text-indigo-900 flex items-center gap-1.5 mb-1 text-[11px] uppercase tracking-wider font-sans">
+                    <Sparkles className="w-4 h-4 text-indigo-600" /> Staging Bypass & Live Tag Verification
+                  </span>
+                  If local port constraints, staging firewalls, or sandboxed environments prevent the network crawler from accessing your updated headers, paste the exact tags you implemented below. Saving will mark them as "Configured" and update your client's overall SEO Audit Score.
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                  {/* Title Input */}
+                  <div className="space-y-1.5_temp">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
+                      HTML Title Tag (&lt;title&gt;)
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full bg-slate-50/50 border border-slate-250/70 focus:border-indigo-400 rounded-xl p-2.5 text-xs text-slate-800 focus:ring-1 focus:ring-indigo-400 font-sans focus:outline-none transition-all"
+                      placeholder="e.g. Acme Agency | High performance cloud analytics tools"
+                      value={editTitle}
+                      onChange={(e) => setEditTitle(e.target.value)}
+                    />
+                  </div>
+
+                  {/* Description Input */}
+                  <div className="space-y-1.5_temp">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
+                      Meta Description Content
+                    </label>
+                    <textarea
+                      rows={2}
+                      className="w-full bg-slate-50/50 border border-slate-250/70 focus:border-indigo-400 rounded-xl p-2.5 text-xs text-slate-800 focus:ring-1 focus:ring-indigo-400 font-sans focus:outline-none transition-all resize-none"
+                      placeholder="e.g. Enterprise SEO tools and rank search engine crawler optimization tools for hyper-growth startups."
+                      value={editDescription}
+                      onChange={(e) => setEditDescription(e.target.value)}
+                    />
+                  </div>
+
+                  {/* H1 input */}
+                  <div className="space-y-1.5_temp">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
+                      Target &lt;h1&gt; Tag Text
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full bg-slate-50/50 border border-slate-250/70 focus:border-indigo-400 rounded-xl p-2.5 text-xs text-slate-800 focus:ring-1 focus:ring-indigo-400 font-sans focus:outline-none transition-all"
+                      placeholder="e.g. High Performance Organic Rank Growth"
+                      value={editH1}
+                      onChange={(e) => setEditH1(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {metadataError && (
+                  <p className="text-xs text-rose-600 font-semibold flex items-center gap-1">
+                    <AlertCircle className="w-3.5 h-3.5" />
+                    {metadataError}
+                  </p>
+                )}
+
+                <div className="flex items-center gap-2 pt-2 justify-end border-t border-slate-100">
+                  <button
+                    type="button"
+                    onClick={() => setIsEditingMetadata(false)}
+                    disabled={savingMetadata}
+                    className="inline-flex items-center justify-center gap-1 px-3.5 py-2 border border-slate-200 hover:border-slate-300 rounded-xl text-xs font-bold text-slate-600 bg-white hover:bg-slate-50 transition cursor-pointer"
+                  >
+                    <X className="w-3.5 h-3.5" /> Cancel Overrides
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSaveMetadata}
+                    disabled={savingMetadata}
+                    className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition cursor-pointer shadow-sm disabled:opacity-50"
+                  >
+                    {savingMetadata ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        Verifying Metadata...
+                      </>
+                    ) : (
+                      <>
+                        <Check className="w-3.5 h-3.5" /> Complete Verification
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
+                {/* Title Tag */}
+                <div className="bg-white border border-slate-150 p-4 rounded-xl space-y-2">
+                  <span className="text-[10px] text-slate-400 font-sans font-bold uppercase tracking-wider block">Index Tag &lt;title&gt;</span>
+                  {report.metadata.titleText ? (
+                    <p className="text-slate-800 leading-relaxed break-words font-sans font-medium">{report.metadata.titleText}</p>
+                  ) : (
+                    <p className="text-slate-400 italic font-sans font-medium">No Title Tag was successfully parsed.</p>
+                  )}
+                </div>
+
+                {/* Description Tag */}
+                <div className="bg-white border border-slate-150 p-4 rounded-xl space-y-2">
+                  <span className="text-[10px] text-slate-400 font-sans font-bold uppercase tracking-wider block">Meta &lt;description&gt;</span>
+                  {report.metadata.descriptionText ? (
+                    <p className="text-slate-800 leading-relaxed break-words font-sans font-medium">{report.metadata.descriptionText}</p>
+                  ) : (
+                    <p className="text-slate-400 italic font-sans font-medium">No Meta Description Tag was successfully parsed.</p>
+                  )}
+                </div>
+
+                {/* H1 Tag */}
+                <div className="bg-white border border-slate-150 p-4 rounded-xl space-y-2">
+                  <span className="text-[10px] text-slate-400 font-sans font-bold uppercase tracking-wider block">Primary Heading &lt;h1&gt; Tag</span>
+                  {report.metadata.h1Text ? (
+                    <p className="text-slate-800 leading-relaxed break-words font-sans font-medium">{report.metadata.h1Text}</p>
+                  ) : (
+                    <p className="text-slate-400 italic font-sans font-medium">No H1 Tag was successfully parsed.</p>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Priority Fix List Logs */}
