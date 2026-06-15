@@ -1,0 +1,6 @@
+{
+  "name": "SEO Agency Toolkit",
+  "description": "An AI-powered SEO Agency Toolkit for auditing websites, writing optimized content, analyzing competitors, tracking rankings, and automating SEO operations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

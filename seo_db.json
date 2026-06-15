@@ -1,0 +1,848 @@
+{
+  "clients": [
+    {
+      "id": "greenwood-gardens",
+      "name": "Greenwood Gardens",
+      "url": "https://greenwoodgardens.example.com",
+      "businessCategory": "Eco-friendly Landscaping & Garden Design",
+      "location": "Portland, Oregon",
+      "keywords": [
+        "eco friendly landscaping portland",
+        "native garden design",
+        "sustainable yards",
+        "organic weed control portland"
+      ],
+      "onboardingDate": "2026-05-10",
+      "seoScore": 78,
+      "rankingKeywordsCount": 14,
+      "monthlyTraffic": 1420,
+      "visibilityScore": 65,
+      "tasksCompleted": 4,
+      "totalTasks": 10
+    },
+    {
+      "id": "apex-wealth",
+      "name": "Apex Wealth Management",
+      "url": "https://apexwealthdenver.example.com",
+      "businessCategory": "Financial Planning & Retirement Wealth Advisory",
+      "location": "Denver, Colorado",
+      "keywords": [
+        "financial planner denver",
+        "retirement advisory denver",
+        "fiduciary advisor colorado",
+        "wealth management denver"
+      ],
+      "onboardingDate": "2026-06-01",
+      "seoScore": 45,
+      "rankingKeywordsCount": 5,
+      "monthlyTraffic": 310,
+      "visibilityScore": 22,
+      "tasksCompleted": 1,
+      "totalTasks": 12
+    },
+    {
+      "id": "webnest",
+      "name": "Webnest",
+      "url": "https://webnest-two.vercel.app/",
+      "businessCategory": "website design,website development",
+      "location": "usa,india",
+      "keywords": [
+        "Website Design Services",
+        "Website Development Services",
+        "Professional Web Designer",
+        "Business Website Development",
+        "Custom Website Design",
+        "Responsive Website Design",
+        "Ecommerce Website Development",
+        "SEO Services",
+        "Local SEO Services",
+        "Technical SEO Services",
+        "Website Design Company in Durgapur",
+        "Web Developer in Durgapur",
+        "SEO Company in Durgapur",
+        "Best Website Designer in Durgapur",
+        "Ecommerce Website Development in Durgapur",
+        "Digital Marketing Agency in Durgapur",
+        "Website Design Services Near Me",
+        "Website Design Company in West Bengal",
+        "SEO Agency in West Bengal",
+        "Web Development Company in West Bengal",
+        "Website Designer in Kolkata",
+        "SEO Expert in Kolkata",
+        "Real Estate Website Design",
+        "School Website Development",
+        "Hospital Website Design",
+        "Restaurant Website Development",
+        "Small Business Website Design",
+        "Construction Company Website Design",
+        "Travel Agency Website Design",
+        "Affordable Website Design Company in Durgapur",
+        "Best SEO Services for Small Business",
+        "Custom Ecommerce Website Development",
+        "SEO-Friendly Website Design Services",
+        "Website Redesign Services for Businesses",
+        "Local Business Website Design Experts"
+      ],
+      "onboardingDate": "2026-06-15",
+      "seoScore": 68,
+      "rankingKeywordsCount": 35,
+      "monthlyTraffic": 50,
+      "visibilityScore": 5,
+      "tasksCompleted": 0,
+      "totalTasks": 8
+    },
+    {
+      "id": "webnest-two",
+      "name": "WebNest",
+      "url": "https://webnest-two.vercel.app/",
+      "businessCategory": "website design, website development, It services,app development, digital marketing",
+      "location": "usa,india,canada",
+      "keywords": [
+        "Website Design Services",
+        "Website Development Services",
+        "Professional Web Designer",
+        "Business Website Development",
+        "Custom Website Design",
+        "Responsive Website Design",
+        "Ecommerce Website Development",
+        "SEO Services",
+        "Local SEO Services",
+        "Technical SEO Services"
+      ],
+      "onboardingDate": "2026-06-15",
+      "seoScore": 0,
+      "rankingKeywordsCount": 10,
+      "monthlyTraffic": 50,
+      "visibilityScore": 5,
+      "tasksCompleted": 0,
+      "totalTasks": 8
+    }
+  ],
+  "audits": {
+    "greenwood-gardens": {
+      "clientId": "greenwood-gardens",
+      "score": 78,
+      "auditedAt": "2026-06-12",
+      "metadata": {
+        "titleExists": true,
+        "titleText": "Greenwood Gardens | Sustainable Garden Design & Landscaping Portland",
+        "descriptionExists": true,
+        "descriptionText": "Transform your outdoor space into an eco-friendly oasis. Native plantings, drip irrigation, organic lawn care in Portland, OR.",
+        "duplicateContentFound": false,
+        "h1Exists": true,
+        "h1Text": "Sustainable Landscape & Native Garden Design Portland",
+        "brokenLinksCount": 1,
+        "speedScore": 84,
+        "isMobileFriendly": true,
+        "schemaMarkupFound": true,
+        "schemaType": "LocalBusiness",
+        "internalLinkingScore": 75,
+        "coreWebVitals": {
+          "lcp": 2.1,
+          "cls": 0.08,
+          "fid": 45
+        }
+      },
+      "fixList": [
+        {
+          "id": "gg-1",
+          "title": "Add Schema.org markup for service packages",
+          "description": "Inject Service schema matching native grass replacement packages.",
+          "priority": "moderate",
+          "category": "Schema Issues",
+          "impact": "medium"
+        },
+        {
+          "id": "gg-2",
+          "title": "Repair broken resource link in footer",
+          "description": "Footer link pointing to stale water management checklist returns 404.",
+          "priority": "critical",
+          "category": "Broken Links",
+          "impact": "high"
+        },
+        {
+          "id": "gg-3",
+          "title": "Optimize index page images to WebP",
+          "description": "Convert portfolio JPEG hero blocks to modern WebP. Potential savings: 1.2s LCP reduction.",
+          "priority": "low",
+          "category": "Core Web Vitals",
+          "impact": "low"
+        }
+      ]
+    },
+    "apex-wealth": {
+      "clientId": "apex-wealth",
+      "score": 45,
+      "auditedAt": "2026-06-13",
+      "metadata": {
+        "titleExists": true,
+        "titleText": "Home - Apex Wealth Denver",
+        "descriptionExists": false,
+        "duplicateContentFound": true,
+        "h1Exists": false,
+        "brokenLinksCount": 12,
+        "speedScore": 51,
+        "isMobileFriendly": false,
+        "schemaMarkupFound": false,
+        "internalLinkingScore": 30,
+        "coreWebVitals": {
+          "lcp": 4.3,
+          "cls": 0.28,
+          "fid": 190
+        }
+      },
+      "fixList": [
+        {
+          "id": "aw-1",
+          "title": "Configure modern descriptive meta description tag",
+          "description": "The home page is entirely missing a meta description. Google will pull random screen scraps.",
+          "priority": "critical",
+          "category": "Missing Meta Descriptions",
+          "impact": "high"
+        },
+        {
+          "id": "aw-2",
+          "title": "Add missing primary H1 tag",
+          "description": "Identify core brand keyword 'Retirement & Fiduciary Advisory Denver' and wrap in a clean front-facing H1 block.",
+          "priority": "critical",
+          "category": "Missing H1 Tags",
+          "impact": "high"
+        },
+        {
+          "id": "aw-3",
+          "title": "Audit and fix broken internal links",
+          "description": "Found 12 broken resources leading to advisory pages and calendar scheduling hooks.",
+          "priority": "critical",
+          "category": "Broken Links",
+          "impact": "high"
+        },
+        {
+          "id": "aw-4",
+          "title": "Resolve mobile viewport content-width clipping issues",
+          "description": "The layout contains non-responsive column bounds. The page horizontally scrolls on mobile.",
+          "priority": "moderate",
+          "category": "Mobile Issues",
+          "impact": "medium"
+        }
+      ]
+    },
+    "webnest": {
+      "clientId": "webnest",
+      "score": 68,
+      "auditedAt": "2026-06-15",
+      "metadata": {
+        "titleExists": true,
+        "descriptionExists": true,
+        "duplicateContentFound": false,
+        "h1Exists": false,
+        "brokenLinksCount": 2,
+        "speedScore": 72,
+        "isMobileFriendly": true,
+        "schemaMarkupFound": false,
+        "internalLinkingScore": 65,
+        "coreWebVitals": {
+          "lcp": 2.8,
+          "cls": 0.12,
+          "fid": 45
+        },
+        "descriptionText": "WebNest is the premier web design and development agency in Durgapur, West Bengal. We build high-performance e-commerce portals, custom enterprise SaaS, and beautiful, lightning-fast React websites with professional SEO.",
+        "h1Text": "",
+        "schemaType": "",
+        "titleText": "WebNest | Best Web Design & Development Company in Durgapur, West Bengal"
+      },
+      "fixList": [
+        {
+          "id": "missing-h1-tag",
+          "title": "Add a single H1 header tag to the home page hero section",
+          "description": "The home page currently has no <h1> element. Change the main hero container wrapper header (currently styled with Tailwind as 'text-4xl md:text-6xl font-extrabold' inside the hero component) from a div or h2 tag to a semantic h1 tag containing 'Web Design & Development Company in Durgapur' to establish immediate keyword hierarchy.",
+          "priority": "critical",
+          "category": "On-Page SEO",
+          "impact": "high"
+        },
+        {
+          "id": "missing-structured-schema",
+          "title": "Implement LocalBusiness and ProfessionalService JSON-LD Schema",
+          "description": "No schema markup was detected. Inject a JSON-LD structured script tag into the Next.js/Vercel head template designating Webnest as a ProfessionalService or LocalBusiness with properties including name, address (Durgapur, West Bengal), geo-coordinates, telephone, and sameAs links to establish local entity authority with search engines.",
+          "priority": "moderate",
+          "category": "Structured Data",
+          "impact": "high"
+        },
+        {
+          "id": "lcp-cls-optimization",
+          "title": "Optimize Largest Contentful Paint (LCP) and Cumulative Layout Shift (CLS)",
+          "description": "The hero image or CSS-heavy animations are delaying the LCP to 2.8s and causing a 0.12 CLS. To resolve this, apply the 'priority' attribute to the Hero Next.js Image component to enable preloading, and define explicit height/width dimensions on parent grid elements to reserve space during hydration, eliminating layout shifts.",
+          "priority": "moderate",
+          "category": "Performance",
+          "impact": "medium"
+        },
+        {
+          "id": "broken-links-cleanups",
+          "title": "Fix broken social and menu placeholder links",
+          "description": "Two dead links pointing to empty href attributes ('#') or placeholder paths were detected in the footer component. Update the social icons (likely Twitter/Facebook placeholders) with absolute valid URLs or use dynamic event-based handlers to prevent search crawlers from hitting dead ends.",
+          "priority": "low",
+          "category": "Crawlability",
+          "impact": "medium"
+        }
+      ]
+    }
+  },
+  "competitors": {
+    "greenwood-gardens": {
+      "clientId": "greenwood-gardens",
+      "analyzedAt": "2026-06-13",
+      "competitors": [
+        {
+          "url": "https://portlandsustainablelandscapes.example.com",
+          "name": "Portland Sustainable Landscapes",
+          "contentLength": 1250,
+          "keywordDensity": 2.1,
+          "backlinksCount": 45,
+          "speedSeconds": 1.8,
+          "internalLinksCount": 22,
+          "schemaType": "LocalBusiness"
+        },
+        {
+          "url": "https://nativepdxgardens.example.com",
+          "name": "Native PDX Gardens & Yards",
+          "contentLength": 980,
+          "keywordDensity": 1.8,
+          "backlinksCount": 18,
+          "speedSeconds": 2.4,
+          "internalLinksCount": 14,
+          "schemaType": "None"
+        }
+      ],
+      "contentGaps": [
+        {
+          "topic": "Native Rainwater Capture Systems",
+          "competitorStrength": "high",
+          "ourStatus": "missing",
+          "actionItem": "Write a 1200-word informative guide on rainwater harvesting incentives in Oregon."
+        },
+        {
+          "topic": "Drought-Resilient Clover Turf Alternatives",
+          "competitorStrength": "medium",
+          "ourStatus": "needs-work",
+          "actionItem": "Enhance our Service descriptions adding micro-copy on clover grass alternatives."
+        }
+      ],
+      "keywordGaps": [
+        {
+          "keyword": "rain garden builder portland",
+          "competitorRank": 3,
+          "searchVolume": 140,
+          "difficulty": 45
+        },
+        {
+          "keyword": "xeriscape yard installation portland",
+          "competitorRank": 5,
+          "searchVolume": 210,
+          "difficulty": 60
+        }
+      ]
+    }
+  },
+  "articles": [
+    {
+      "id": "art-1",
+      "clientId": "greenwood-gardens",
+      "title": "Why Switch to Native Plant Landscaping in Portland?",
+      "type": "blog",
+      "content": "<h1>Why Switch to Native Plant Landscaping in Portland?</h1><p>Transitioning your yard to prioritize local, native botanical flora yields substantial gains both for your regional aquifer and your weekend tranquility...</p>",
+      "createdAt": "2026-06-10",
+      "keywordsUsed": [
+        "native garden design",
+        "sustainable yards"
+      ]
+    }
+  ],
+  "rankHistory": {
+    "greenwood-gardens": [
+      {
+        "id": "r1",
+        "clientId": "greenwood-gardens",
+        "keyword": "eco friendly landscaping portland",
+        "currentRank": 4,
+        "previousRank": 6,
+        "volume": 320,
+        "history": [
+          {
+            "date": "06-08",
+            "rank": 8,
+            "mobileRank": 10,
+            "localRank": 5
+          },
+          {
+            "date": "06-09",
+            "rank": 7,
+            "mobileRank": 9,
+            "localRank": 4
+          },
+          {
+            "date": "06-10",
+            "rank": 6,
+            "mobileRank": 8,
+            "localRank": 4
+          },
+          {
+            "date": "06-11",
+            "rank": 6,
+            "mobileRank": 7,
+            "localRank": 4
+          },
+          {
+            "date": "06-12",
+            "rank": 5,
+            "mobileRank": 7,
+            "localRank": 3
+          },
+          {
+            "date": "06-13",
+            "rank": 4,
+            "mobileRank": 6,
+            "localRank": 3
+          },
+          {
+            "date": "06-14",
+            "rank": 4,
+            "mobileRank": 5,
+            "localRank": 2
+          }
+        ]
+      },
+      {
+        "id": "r2",
+        "clientId": "greenwood-gardens",
+        "keyword": "native garden design portland",
+        "currentRank": 12,
+        "previousRank": 15,
+        "volume": 480,
+        "history": [
+          {
+            "date": "06-08",
+            "rank": 16,
+            "mobileRank": 18,
+            "localRank": 14
+          },
+          {
+            "date": "06-10",
+            "rank": 15,
+            "mobileRank": 17,
+            "localRank": 13
+          },
+          {
+            "date": "06-12",
+            "rank": 13,
+            "mobileRank": 15,
+            "localRank": 11
+          },
+          {
+            "date": "06-14",
+            "rank": 12,
+            "mobileRank": 14,
+            "localRank": 10
+          }
+        ]
+      }
+    ],
+    "apex-wealth": [
+      {
+        "id": "r3",
+        "clientId": "apex-wealth",
+        "keyword": "financial planner denver",
+        "currentRank": 38,
+        "previousRank": 41,
+        "volume": 880,
+        "history": [
+          {
+            "date": "06-08",
+            "rank": 45,
+            "mobileRank": 50,
+            "localRank": 32
+          },
+          {
+            "date": "06-10",
+            "rank": 43,
+            "mobileRank": 48,
+            "localRank": 32
+          },
+          {
+            "date": "06-12",
+            "rank": 41,
+            "mobileRank": 46,
+            "localRank": 30
+          },
+          {
+            "date": "06-14",
+            "rank": 38,
+            "mobileRank": 42,
+            "localRank": 28
+          }
+        ]
+      }
+    ],
+    "webnest": [
+      {
+        "id": "r-new-webnest-0",
+        "clientId": "webnest",
+        "keyword": "Website Design Services",
+        "currentRank": 51,
+        "previousRank": 55,
+        "volume": 518,
+        "history": [
+          {
+            "date": "06-08",
+            "rank": 55,
+            "mobileRank": 56,
+            "localRank": 53
+          },
+          {
+            "date": "06-10",
+            "rank": 53,
+            "mobileRank": 54,
+            "localRank": 52
+          },
+          {
+            "date": "06-12",
+            "rank": 52,
+            "mobileRank": 52,
+            "localRank": 51
+          },
+          {
+            "date": "06-14",
+            "rank": 51,
+            "mobileRank": 51,
+            "localRank": 51
+          }
+        ]
+      },
+      {
+        "id": "r-new-webnest-1",
+        "clientId": "webnest",
+        "keyword": "Website Development Services",
+        "currentRank": 24,
+        "previousRank": 28,
+        "volume": 537,
+        "history": [
+          {
+            "date": "06-08",
+            "rank": 28,
+            "mobileRank": 29,
+            "localRank": 26
+          },
+          {
+            "date": "06-10",
+            "rank": 26,
+            "mobileRank": 27,
+            "localRank": 25
+          },
+          {
+            "date": "06-12",
+            "rank": 25,
+            "mobileRank": 25,
+            "localRank": 24
+          },
+          {
+            "date": "06-14",
+            "rank": 24,
+            "mobileRank": 24,
+            "localRank": 24
+          }
+        ]
+      },
+      {
+        "id": "r-new-webnest-2",
+        "clientId": "webnest",
+        "keyword": "Professional Web Designer",
+        "currentRank": 33,
+        "previousRank": 37,
+        "volume": 542,
+        "history": [
+          {
+            "date": "06-08",
+            "rank": 37,
+            "mobileRank": 38,
+            "localRank": 35
+          },
+          {
+            "date": "06-10",
+            "rank": 35,
+            "mobileRank": 36,
+            "localRank": 34
+          },
+          {
+            "date": "06-12",
+            "rank": 34,
+            "mobileRank": 34,
+            "localRank": 33
+          },
+          {
+            "date": "06-14",
+            "rank": 33,
+            "mobileRank": 33,
+            "localRank": 33
+          }
+        ]
+      },
+      {
+        "id": "r-new-webnest-3",
+        "clientId": "webnest",
+        "keyword": "Business Website Development",
+        "currentRank": 54,
+        "previousRank": 58,
+        "volume": 468,
+        "history": [
+          {
+            "date": "06-08",
+            "rank": 58,
+            "mobileRank": 59,
+            "localRank": 56
+          },
+          {
+            "date": "06-10",
+            "rank": 56,
+            "mobileRank": 57,
+            "localRank": 55
+          },
+          {
+            "date": "06-12",
+            "rank": 55,
+            "mobileRank": 55,
+            "localRank": 54
+          },
+          {
+            "date": "06-14",
+            "rank": 54,
+            "mobileRank": 54,
+            "localRank": 54
+          }
+        ]
+      },
+      {
+        "id": "r-new-webnest-4",
+        "clientId": "webnest",
+        "keyword": "Custom Website Design",
+        "currentRank": 45,
+        "previousRank": 49,
+        "volume": 595,
+        "history": [
+          {
+            "date": "06-08",
+            "rank": 49,
+            "mobileRank": 50,
+            "localRank": 47
+          },
+          {
+            "date": "06-10",
+            "rank": 47,
+            "mobileRank": 48,
+            "localRank": 46
+          },
+          {
+            "date": "06-12",
+            "rank": 46,
+            "mobileRank": 46,
+            "localRank": 45
+          },
+          {
+            "date": "06-14",
+            "rank": 45,
+            "mobileRank": 45,
+            "localRank": 45
+          }
+        ]
+      },
+      {
+        "id": "r-new-webnest-5",
+        "clientId": "webnest",
+        "keyword": "Responsive Website Design",
+        "currentRank": 26,
+        "previousRank": 30,
+        "volume": 236,
+        "history": [
+          {
+            "date": "06-08",
+            "rank": 30,
+            "mobileRank": 31,
+            "localRank": 28
+          },
+          {
+            "date": "06-10",
+            "rank": 28,
+            "mobileRank": 29,
+            "localRank": 27
+          },
+          {
+            "date": "06-12",
+            "rank": 27,
+            "mobileRank": 27,
+            "localRank": 26
+          },
+          {
+            "date": "06-14",
+            "rank": 26,
+            "mobileRank": 26,
+            "localRank": 26
+          }
+        ]
+      },
+      {
+        "id": "r-new-webnest-6",
+        "clientId": "webnest",
+        "keyword": "Ecommerce Website Development",
+        "currentRank": 45,
+        "previousRank": 49,
+        "volume": 195,
+        "history": [
+          {
+            "date": "06-08",
+            "rank": 49,
+            "mobileRank": 50,
+            "localRank": 47
+          },
+          {
+            "date": "06-10",
+            "rank": 47,
+            "mobileRank": 48,
+            "localRank": 46
+          },
+          {
+            "date": "06-12",
+            "rank": 46,
+            "mobileRank": 46,
+            "localRank": 45
+          },
+          {
+            "date": "06-14",
+            "rank": 45,
+            "mobileRank": 45,
+            "localRank": 45
+          }
+        ]
+      },
+      {
+        "id": "r-new-webnest-7",
+        "clientId": "webnest",
+        "keyword": "SEO Services",
+        "currentRank": 56,
+        "previousRank": 60,
+        "volume": 500,
+        "history": [
+          {
+            "date": "06-08",
+            "rank": 60,
+            "mobileRank": 61,
+            "localRank": 58
+          },
+          {
+            "date": "06-10",
+            "rank": 58,
+            "mobileRank": 59,
+            "localRank": 57
+          },
+          {
+            "date": "06-12",
+            "rank": 57,
+            "mobileRank": 57,
+            "localRank": 56
+          },
+          {
+            "date": "06-14",
+            "rank": 56,
+            "mobileRank": 56,
+            "localRank": 56
+          }
+        ]
+      },
+      {
+        "id": "r-new-webnest-8",
+        "clientId": "webnest",
+        "keyword": "Local SEO Services",
+        "currentRank": 33,
+        "previousRank": 37,
+        "volume": 470,
+        "history": [
+          {
+            "date": "06-08",
+            "rank": 37,
+            "mobileRank": 38,
+            "localRank": 35
+          },
+          {
+            "date": "06-10",
+            "rank": 35,
+            "mobileRank": 36,
+            "localRank": 34
+          },
+          {
+            "date": "06-12",
+            "rank": 34,
+            "mobileRank": 34,
+            "localRank": 33
+          },
+          {
+            "date": "06-14",
+            "rank": 33,
+            "mobileRank": 33,
+            "localRank": 33
+          }
+        ]
+      },
+      {
+        "id": "r-new-webnest-9",
+        "clientId": "webnest",
+        "keyword": "Technical SEO Services",
+        "currentRank": 50,
+        "previousRank": 54,
+        "volume": 229,
+        "history": [
+          {
+            "date": "06-08",
+            "rank": 54,
+            "mobileRank": 55,
+            "localRank": 52
+          },
+          {
+            "date": "06-10",
+            "rank": 52,
+            "mobileRank": 53,
+            "localRank": 51
+          },
+          {
+            "date": "06-12",
+            "rank": 51,
+            "mobileRank": 51,
+            "localRank": 50
+          },
+          {
+            "date": "06-14",
+            "rank": 50,
+            "mobileRank": 50,
+            "localRank": 50
+          }
+        ]
+      }
+    ]
+  },
+  "reports": [
+    {
+      "id": "rep-1",
+      "clientId": "greenwood-gardens",
+      "createdAt": "2026-06-01",
+      "period": "May 2026",
+      "seoScore": 78,
+      "trafficGrowth": "+24% Month-over-Month",
+      "rankingsSummary": "Rankings for core keyword 'eco friendly landscaping portland' rose from spot #8 to #4, entering search views.",
+      "workCompleted": [
+        "Constructed custom blog post 'Why Switch to Native Plant Landscaping in Portland'.",
+        "Wrote structural LocalBusiness Schema.org markup.",
+        "Corrected critical meta titles on index page."
+      ],
+      "nextSteps": [
+        "Launch rain garden content sequence targeting keyword voids.",
+        "Fix broken footer anchor resources.",
+        "Compress heavy imagery portfolio weights on home domain."
+      ]
+    }
+  ]
+}
